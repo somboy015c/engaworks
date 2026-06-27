@@ -1,0 +1,954 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Enga Works · Design & Arch</title>
+  <link rel="icon" type="image/png" href="favicon.png">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+  <style>
+    /* ===== design system – light & dark ===== */
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    :root {
+      --primary: #232d39;
+      --primary-light: #2f3c4b;
+      --secondary: #3a4a5e;
+      --accent: #232d39;
+      --accent-light: #3a4a5e;
+      --light: #ffffff;
+      --off-white: #f7f9fc;
+      --dark: #1a222b;
+      --gray: #5a6a7a;
+      --light-gray: #eef2f6;
+      --transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+      --shadow-sm: 0 4px 14px rgba(35,45,57,0.04);
+      --shadow-md: 0 12px 32px rgba(35,45,57,0.08);
+      --shadow-lg: 0 24px 48px rgba(35,45,57,0.12);
+      --radius-sm: 12px;
+      --radius-md: 20px;
+      --radius-lg: 32px;
+      --radius-xl: 40px;
+      --bg-body: #ffffff;
+      --bg-section: #f7f9fc;
+      --text-primary: #1a222b;
+      --text-secondary: #5a6a7a;
+      --border-color: rgba(35,45,57,0.06);
+      --card-bg: #ffffff;
+      --hero-overlay: rgba(35,45,57,0.85);
+      --stat-number-color: #232d39;
+      --service-icon-color: #232d39;
+      /* Consistent font sizes */
+      --fs-base: 1rem;
+      --fs-small: 0.875rem;
+      --fs-medium: 1.125rem;
+      --fs-large: 1.25rem;
+      --fs-xl: 1.5rem;
+      --fs-2xl: 2rem;
+      --fs-3xl: 2.5rem;
+      --fs-4xl: 3rem;
+    }
+    [data-theme="dark"] {
+      --bg-body: #12181f;
+      --bg-section: #1a222b;
+      --text-primary: #eef2f6;
+      --text-secondary: #a0b0c0;
+      --border-color: rgba(255,255,255,0.06);
+      --card-bg: #1e2833;
+      --hero-overlay: rgba(18,24,31,0.92);
+      --shadow-sm: 0 4px 14px rgba(0,0,0,0.2);
+      --shadow-md: 0 12px 32px rgba(0,0,0,0.3);
+      --shadow-lg: 0 24px 48px rgba(0,0,0,0.4);
+      --light-gray: #2a3643;
+      --off-white: #1a222b;
+      --stat-number-color: #a0b0c0;
+      --service-icon-color: #a0b0c0;
+    }
+    body {
+      font-family: 'Inter', sans-serif;
+      color: var(--text-primary);
+      line-height: 1.6;
+      background: var(--bg-body);
+      font-size: var(--fs-base);
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+      transition: background 0.4s ease, color 0.4s ease;
+    }
+    h1, h2, h3, h4 { font-weight: 700; letter-spacing: -0.02em; line-height: 1.2; color: var(--text-primary); }
+    .container { width: 100%; max-width: 1300px; margin: 0 auto; padding: 0 40px; }
+    @media (max-width: 1024px) { .container { padding: 0 30px; } }
+    @media (max-width: 768px) { .container { padding: 0 20px; } }
+
+    /* ===== header ===== */
+    header {
+      position: fixed; width: 100%; z-index: 1000; padding: 16px 0;
+      transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+      background: transparent;
+    }
+    header.scrolled {
+      background: var(--bg-body);
+      backdrop-filter: blur(12px);
+      padding: 10px 0;
+      box-shadow: 0 8px 30px rgba(0,0,0,0.06);
+    }
+    [data-theme="dark"] header.scrolled {
+      background: rgba(18,24,31,0.95);
+      box-shadow: 0 8px 30px rgba(0,0,0,0.3);
+    }
+    .navbar { display: flex; justify-content: space-between; align-items: center; }
+    .logo {
+      font-size: var(--fs-2xl); font-weight: 800; color: white; text-decoration: none;
+      display: flex; align-items: center; letter-spacing: -0.02em;
+    }
+    .logo .logo-light { display: inline; color: white; font-size: var(--fs-2xl); }
+    .logo .logo-dark { display: none; color: var(--text-primary); font-size: var(--fs-2xl); }
+    header.scrolled .logo .logo-light { display: none; }
+    header.scrolled .logo .logo-dark { display: inline; }
+    header.scrolled .logo { color: var(--text-primary); }
+    
+    /* Light mode: when scrolled, show logo_dark.png */
+    :not([data-theme="dark"]) header.scrolled .logo .logo-light img { content: url("logo_dark.png"); }
+    
+    /* Dark mode: when scrolled, show logo.png */
+    [data-theme="dark"] header.scrolled .logo .logo-dark img { content: url("logo.png"); }
+    
+    .logo-light img { height: 35px; vertical-align: center; }
+    .logo-dark img { height: 35px; vertical-align: center; }
+    
+    /* Hide text on tablet & mobile, show only logo */
+    @media (max-width: 1024px) {
+      .logo .logo-text { display: none; }
+      .logo .logo-light, .logo .logo-dark { font-size: 0; }
+      .logo .logo-light img, .logo .logo-dark img { height: 32px; }
+    }
+    @media (max-width: 768px) {
+      .logo .logo-light img, .logo .logo-dark img { height: 28px; }
+    }
+    
+    .nav-links { display: flex; list-style: none; align-items: center; gap: 36px; }
+    .nav-links li { margin: 0; }
+    .nav-links a {
+      text-decoration: none; color: white; font-weight: 500; font-size: var(--fs-base);
+      transition: var(--transition); position: relative; padding: 6px 0;
+      letter-spacing: 0.01em;
+    }
+    header.scrolled .nav-links a { color: var(--text-primary); }
+    .nav-links a::after {
+      content: ''; position: absolute; bottom: -2px; left: 0; width: 0;
+      height: 2px; background: var(--primary); transition: 0.3s;
+    }
+    .nav-links a:hover::after { width: 100%; }
+    .btn-contact {
+      background: var(--primary); color: white !important; padding: 10px 24px !important;
+      border-radius: 40px; font-weight: 600; box-shadow: 0 8px 20px rgba(35,45,57,0.15);
+      transition: var(--transition); font-size: var(--fs-base);
+    }
+    .btn-contact:hover { background: var(--primary-light); transform: translateY(-2px); }
+    .btn-contact::after { display: none; }
+    .hamburger { display: none; cursor: pointer; font-size: var(--fs-xl); color: white; }
+    header.scrolled .hamburger { color: var(--text-primary); }
+
+    /* ===== theme toggle ===== */
+    .theme-toggle {
+      background: rgba(255,255,255,0.12);
+      border: 1px solid rgba(255,255,255,0.08);
+      color: white;
+      width: 38px; height: 38px;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer;
+      transition: var(--transition);
+      font-size: var(--fs-base);
+      backdrop-filter: blur(4px);
+    }
+    header.scrolled .theme-toggle {
+      background: var(--border-color);
+      color: var(--text-primary);
+      border-color: var(--border-color);
+    }
+    .theme-toggle:hover { transform: scale(1.05); background: rgba(255,255,255,0.2); }
+    [data-theme="dark"] .theme-toggle {
+      background: rgba(255,255,255,0.08);
+      color: #eef2f6;
+    }
+    .nav-controls { display: flex; align-items: center; gap: 14px; }
+
+    /* ===== hero slider ===== */
+    .hero-slider {
+      position: relative;
+      min-height: 100vh;
+      overflow: hidden;
+    }
+    .slide {
+      position: absolute;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background-size: cover;
+      background-position: center;
+      opacity: 0;
+      transition: opacity 1.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+      z-index: 1;
+    }
+    .slide.active { opacity: 1; z-index: 2; }
+    .slide-overlay {
+      position: absolute;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background: var(--hero-overlay);
+      z-index: 3;
+      transition: background 0.6s ease;
+    }
+    .hero-content {
+      position: relative;
+      z-index: 4;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      color: white;
+      padding: 0 0 0px;
+    }
+    .hero-content .container { width: 100%; }
+    .hero-badge {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: rgba(255,255,255,0.10);
+      backdrop-filter: blur(8px);
+      padding: 6px 16px 6px 14px; border-radius: 60px;
+      font-size: var(--fs-small); font-weight: 500; letter-spacing: 0.3px;
+      border: 1px solid rgba(255,255,255,0.06);
+      margin-bottom: 20px;
+    }
+    .hero-content h1 { 
+      font-size: var(--fs-4xl); font-weight: 800; line-height: 1.1; 
+      margin-bottom: 16px; color: white; 
+    }
+    .hero-content h1 .highlight {
+      background: rgba(255,255,255,0.12);
+      padding: 0.05rem 0.8rem; border-radius: 10px;
+      display: inline-block; backdrop-filter: blur(4px);
+    }
+    .hero-content p { 
+      font-size: var(--fs-medium); margin-bottom: 30px; opacity: 0.9; 
+      max-width: 580px; line-height: 1.7; color: rgba(255,255,255,0.85); 
+    }
+    .hero-actions { display: flex; gap: 14px; flex-wrap: wrap; }
+
+    /* slider controls */
+    .slider-controls {
+      position: absolute;
+      bottom: 30px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 5;
+      display: flex;
+      gap: 12px;
+      align-items: center;
+    }
+    .slider-dot {
+      width: 10px; height: 10px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.3);
+      border: none;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      padding: 0;
+    }
+    .slider-dot.active { background: white; transform: scale(1.2); }
+    .slider-dot:hover { background: rgba(255,255,255,0.6); }
+    .slider-arrow {
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.1);
+      color: white;
+      width: 38px; height: 38px;
+      border-radius: 50%;
+      cursor: pointer;
+      transition: var(--transition);
+      font-size: var(--fs-base);
+      backdrop-filter: blur(4px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .slider-arrow:hover { background: rgba(255,255,255,0.2); transform: scale(1.05); }
+
+    /* ===== buttons ===== */
+    .btn {
+      display: inline-block; padding: 12px 28px; background: var(--primary); color: white;
+      border: none; border-radius: 60px; cursor: pointer; font-size: var(--fs-base);
+      font-weight: 600; text-decoration: none; transition: var(--transition);
+      box-shadow: 0 6px 20px rgba(35,45,57,0.15);
+      min-width: 140px; text-align: center; letter-spacing: 0.01em;
+    }
+    .btn:hover { background: var(--primary-light); transform: translateY(-3px); box-shadow: 0 12px 28px rgba(35,45,57,0.2); }
+    .btn-accent { background: var(--primary); color: white; }
+    .btn-accent:hover { background: var(--primary-light); }
+    .btn-outline {
+      background: transparent; color: white; border: 2px solid rgba(255,255,255,0.3);
+      box-shadow: none;
+    }
+    .btn-outline:hover { background: rgba(255,255,255,0.1); border-color: white; transform: translateY(-3px); }
+    [data-theme="dark"] .btn { box-shadow: 0 6px 20px rgba(0,0,0,0.3); }
+
+    /* ===== sections ===== */
+    section { padding: 70px 0; position: relative; background: var(--bg-body); }
+    .section-title { margin-bottom: 40px; }
+    .section-title h2 {
+      font-size: var(--fs-3xl); color: var(--text-primary); position: relative;
+      padding-bottom: 14px; display: inline-block; font-weight: 700;
+    }
+    .section-title h2:after {
+      content: ''; position: absolute; width: 50px; height: 3px;
+      background: var(--primary); bottom: 0; left: 0; border-radius: 4px;
+    }
+    .bg-light { background-color: var(--bg-section); }
+
+    /* ===== about ===== */
+    .about-grid {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 50px; align-items: stretch;
+    }
+    .about-content { display: flex; flex-direction: column; height: 100%; }
+    .about-image { height: 100%; display: flex; align-items: center; }
+    .about-image img {
+      width: 100%; height: 100%; object-fit: cover; border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-lg); min-height: 400px;
+    }
+    .about-content h2 { 
+      font-size: var(--fs-2xl); margin-bottom: 16px; 
+      color: var(--text-primary);
+    }
+    .about-content p { 
+      font-size: var(--fs-base); margin-bottom: 16px; 
+      text-align: justify; color: var(--text-secondary);
+    }
+
+    /* ===== stats ===== */
+    .stats-grid {
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px;
+      margin: 30px 0 20px;
+    }
+    .stat-card {
+      background: var(--card-bg); padding: 18px 14px; border-radius: var(--radius-sm);
+      text-align: center; box-shadow: var(--shadow-sm);
+      border: 1px solid var(--border-color);
+      transition: all 0.3s ease; min-height: 100px;
+      display: flex; flex-direction: column; justify-content: center;
+    }
+    .stat-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-md); border-color: var(--primary); }
+    .stat-number { 
+      font-size: var(--fs-2xl); font-weight: 800; 
+      color: var(--stat-number-color); 
+      line-height: 1.2; margin-bottom: 4px; 
+      transition: color 0.4s ease;
+    }
+    .stat-label { font-size: var(--fs-small); color: var(--text-secondary); font-weight: 500; line-height: 1.3; }
+    .stat-details { font-size: var(--fs-small); color: var(--text-secondary); font-weight: 500; margin-top: 4px; border-top: 1px dashed var(--border-color); padding-top: 4px; opacity: 0.8; }
+
+    /* ===== services ===== */
+    .services-grid {
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px;
+    }
+    @media (max-width: 992px) { .services-grid { grid-template-columns: repeat(2, 1fr); } }
+    @media (max-width: 600px) { .services-grid { grid-template-columns: 1fr; } }
+    .service-card {
+      background: var(--card-bg); border-radius: var(--radius-md); padding: 30px 24px;
+      box-shadow: var(--shadow-sm); transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+      border: 1px solid var(--border-color); display: flex; flex-direction: column;
+      position: relative; overflow: hidden;
+    }
+    .service-card::after {
+      content: ''; position: absolute; bottom: 0; left: 0; right: 0;
+      height: 3px; background: var(--primary);
+      transform: scaleX(0); transition: transform 0.4s ease; transform-origin: left;
+    }
+    .service-card:hover { transform: translateY(-8px); box-shadow: var(--shadow-lg); }
+    .service-card:hover::after { transform: scaleX(1); }
+    .service-card i { 
+      font-size: var(--fs-3xl); 
+      color: var(--service-icon-color); 
+      margin-bottom: 14px; 
+      transition: all 0.3s ease; 
+    }
+    .service-card:hover i { transform: scale(1.1); }
+    .service-card h3 { 
+      font-size: var(--fs-large); margin-bottom: 8px; 
+      font-weight: 700; color: var(--text-primary); 
+    }
+    .service-card p { 
+      flex: 1; color: var(--text-secondary); 
+      font-size: var(--fs-base); line-height: 1.6; 
+    }
+
+    /* ===== projects ===== */
+    .projects-grid {
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px;
+    }
+    @media (max-width: 992px) { .projects-grid { grid-template-columns: repeat(2, 1fr); } }
+    @media (max-width: 600px) { .projects-grid { grid-template-columns: 1fr; } }
+    .project-card {
+      background: var(--card-bg); border-radius: var(--radius-md); overflow: hidden;
+      box-shadow: var(--shadow-sm); transition: all 0.3s ease;
+      border: 1px solid var(--border-color);
+    }
+    .project-card:hover { transform: translateY(-6px); box-shadow: var(--shadow-lg); }
+    .project-card img { width: 100%; height: 200px; object-fit: cover; }
+    .project-info { padding: 20px; }
+    .project-info h3 { 
+      font-weight: 700; margin-bottom: 4px; 
+      color: var(--text-primary); font-size: var(--fs-large); 
+    }
+    .project-info p { 
+      color: var(--text-secondary); font-size: var(--fs-base); 
+    }
+    .project-tag {
+      display: inline-block; background: var(--primary); color: white;
+      padding: 2px 12px; border-radius: 40px; font-size: var(--fs-small); font-weight: 600;
+      margin-top: 8px; letter-spacing: 0.3px;
+    }
+
+    /* ===== sectors ===== */
+    .sectors-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 14px;
+    }
+    .sector-item {
+      background: var(--card-bg); padding: 22px 14px; border-radius: var(--radius-sm);
+      text-align: center; font-weight: 600; color: var(--text-primary);
+      box-shadow: var(--shadow-sm); border: 1px solid var(--border-color);
+      transition: all 0.25s ease; font-size: var(--fs-base);
+    }
+    .sector-item:hover { border-color: var(--primary); transform: scale(1.03); box-shadow: var(--shadow-md); }
+
+    /* ===== partners ===== */
+    .partners-grid {
+      display: grid; grid-template-columns: repeat(5, 1fr); gap: 20px; align-items: center;
+      margin-top: 30px;
+    }
+    .partner-item {
+      background: var(--card-bg); padding: 20px; border-radius: var(--radius-sm); text-align: center;
+      box-shadow: var(--shadow-sm); transition: all 0.3s ease;
+      filter: grayscale(80%); opacity: 0.7; border: 1px solid var(--border-color);
+    }
+    .partner-item:hover { filter: grayscale(0); opacity: 1; transform: scale(1.05); box-shadow: var(--shadow-md); border-color: var(--primary); }
+    .partner-item span { font-weight: 600; color: var(--text-primary); font-size: var(--fs-medium); }
+    @media (max-width: 992px) { .partners-grid { grid-template-columns: repeat(3, 1fr); } }
+    @media (max-width: 600px) { .partners-grid { grid-template-columns: repeat(2, 1fr); gap: 14px; } }
+
+    /* ===== footer ===== */
+    footer {
+      background: var(--dark); color: white; padding: 50px 0 24px;
+    }
+    [data-theme="dark"] footer { background: #0d1219; }
+    .footer-grid {
+      display: grid; grid-template-columns: 2.2fr 0.9fr 1.2fr 1.2fr; gap: 40px; margin-bottom: 40px;
+      align-items: start;
+    }
+    .footer-brand { 
+      display: flex; flex-direction: column;
+    }
+    .footer-logo { 
+      color: white; font-size: var(--fs-2xl); 
+      font-weight: 800; text-decoration: none; 
+      display: flex; align-items: center; 
+    }
+    .footer-brand p { 
+      margin: 16px 0; color: rgba(255,255,255,0.7); 
+      line-height: 1.7; font-size: var(--fs-base); 
+    }
+    .footer-links h4 { 
+      color: white; margin-bottom: 20px; 
+      font-size: var(--fs-large); letter-spacing: 0.3px; 
+      font-weight: 600; 
+    }
+    .footer-links ul { list-style: none; }
+    .footer-links li { margin-bottom: 10px; }
+    .footer-links a { 
+      color: rgba(255,255,255,0.7); text-decoration: none; 
+      transition: 0.3s; font-weight: 400; font-size: var(--fs-base); 
+      display: inline-block;
+    }
+    .footer-links a:hover { color: white; padding-left: 6px; }
+    .office p { 
+      color: rgba(255,255,255,0.7); margin-bottom: 8px; 
+      line-height: 1.6; font-size: var(--fs-base); 
+    }
+    .office strong { color: rgba(255,255,255,0.9); }
+    .office i { color: rgba(255,255,255,0.5); margin-right: 8px; width: 18px; }
+    .social-links { display: flex; gap: 16px; margin-top: 16px; }
+    .social-links a { 
+      color: rgba(255,255,255,0.6); font-size: var(--fs-xl); 
+      transition: 0.3s; 
+    }
+    .social-links a:hover { color: white; transform: translateY(-2px); }
+    .copyright { 
+      text-align: center; border-top: 1px solid rgba(255,255,255,0.06); 
+      padding-top: 24px; color: rgba(255,255,255,0.5); font-size: var(--fs-small); 
+    }
+
+    /* ===== responsive ===== */
+    /* Large desktop to small desktop (1025px - 1300px) */
+    @media (max-width: 1300px) {
+      .hero-content h1 { font-size: var(--fs-3xl); }
+      .hero-content { min-height: 90vh; }
+      .hero-slider { min-height: 90vh; }
+    }
+
+    /* Tablet landscape (992px - 1024px) */
+    @media (max-width: 1024px) {
+      .about-grid { grid-template-columns: 1fr; gap: 30px; }
+      .about-image img { min-height: 280px; }
+      .footer-grid { grid-template-columns: 1fr 1fr; gap: 30px; }
+      .hero-content h1 { font-size: var(--fs-3xl); }
+      section { padding: 50px 0; }
+      .hero-content { padding: 0 0 40px; min-height: 85vh; }
+      .hero-slider { min-height: 85vh; }
+      .nav-links { gap: 24px; }
+      .logo .logo-light img, .logo .logo-dark img { height: 32px; }
+      .hero-content p { font-size: var(--fs-base); }
+      .hero-badge { font-size: var(--fs-small); }
+      .btn { padding: 10px 24px; min-width: 130px; }
+    }
+
+    /* Tablet portrait (768px - 991px) */
+    @media (max-width: 991px) {
+      .nav-links { gap: 20px; }
+      .nav-links a { font-size: var(--fs-small); }
+      .btn-contact { padding: 8px 18px !important; font-size: var(--fs-small); }
+      .services-grid { grid-template-columns: repeat(2, 1fr); gap: 20px; }
+      .projects-grid { grid-template-columns: repeat(2, 1fr); gap: 20px; }
+      .partners-grid { grid-template-columns: repeat(3, 1fr); }
+      .hero-content h1 { font-size: var(--fs-3xl); }
+      .hero-content { min-height: 80vh; padding: 0 0 40px; }
+      .hero-slider { min-height: 80vh; }
+      .stat-number { font-size: var(--fs-xl); }
+      .stat-card { min-height: 85px; padding: 14px 12px; }
+      .footer-grid { grid-template-columns: 1fr 1fr; }
+    }
+
+    /* Mobile (768px and below) */
+    @media (max-width: 768px) {
+      .hamburger { display: block; }
+      .nav-links {
+        position: fixed; top: 60px; right: -100%; width: 80%; max-width: 280px;
+        height: auto; background: var(--bg-body); flex-direction: column; 
+        align-items: flex-start; padding: 28px 24px; gap: 16px; 
+        border-radius: var(--radius-md); box-shadow: var(--shadow-lg); 
+        transition: 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+        border: 1px solid var(--border-color);
+      }
+      .nav-links.active { right: 5%; }
+      .nav-links a { color: var(--text-primary) !important; font-size: var(--fs-base); }
+      .btn-contact { width: 100%; text-align: center; }
+      .stats-grid { grid-template-columns: 1fr; gap: 12px; }
+      .hero-content h1 { font-size: var(--fs-2xl); }
+      .section-title h2 { font-size: var(--fs-2xl); }
+      .hero-content { padding: 80px 0 60px; min-height: auto; }
+      .hero-slider { min-height: auto; }
+      .slider-controls { bottom: 16px; gap: 10px; }
+      .slider-arrow { width: 34px; height: 34px; font-size: var(--fs-small); }
+      .nav-controls { gap: 10px; }
+      .about-content h2 { font-size: var(--fs-xl); }
+      .hero-content p { font-size: var(--fs-base); }
+      .hero-badge { font-size: var(--fs-small); padding: 5px 14px 5px 12px; }
+      .btn { padding: 10px 20px; min-width: 110px; font-size: var(--fs-small); }
+      section { padding: 40px 0; }
+      .section-title { margin-bottom: 30px; }
+      .about-image img { min-height: 220px; }
+      .stat-number { font-size: var(--fs-xl); }
+      .service-card { padding: 24px 18px; }
+      .service-card h3 { font-size: var(--fs-medium); }
+      .project-info h3 { font-size: var(--fs-medium); }
+      .logo-light img, .logo-dark img { height: 28px; }
+      .theme-toggle { width: 34px; height: 34px; font-size: var(--fs-small); }
+      .hero-actions { gap: 10px; }
+      .services-grid { gap: 16px; }
+      .projects-grid { gap: 16px; }
+      .project-card img { height: 180px; }
+      .footer-grid { grid-template-columns: 1fr; gap: 30px; }
+      .partners-grid { grid-template-columns: repeat(2, 1fr); gap: 14px; }
+    }
+
+    /* Small mobile (480px and below) */
+    @media (max-width: 480px) {
+      .hero-content h1 { font-size: var(--fs-xl); }
+      .hero-content { padding: 70px 0 40px; }
+      .hero-content p { font-size: var(--fs-small); }
+      .btn { width: 100%; min-width: unset; }
+      .about-image img { min-height: 180px; }
+      .services-grid { gap: 14px; }
+      .projects-grid { gap: 14px; }
+      .project-card img { height: 140px; }
+      .sectors-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+      .sector-item { padding: 14px 10px; font-size: var(--fs-small); }
+      .partners-grid { gap: 10px; }
+      .partner-item { padding: 14px; }
+      .partner-item span { font-size: var(--fs-small); }
+      .footer-grid { gap: 24px; }
+      .footer-logo { font-size: var(--fs-xl); }
+      .footer-links h4 { font-size: var(--fs-medium); }
+      .stat-card { padding: 12px 10px; min-height: 70px; }
+      .stat-number { font-size: var(--fs-large); }
+      .stat-label { font-size: var(--fs-small); }
+      .stat-details { font-size: var(--fs-small); }
+      .slider-controls { bottom: 12px; gap: 8px; }
+      .slider-arrow { width: 30px; height: 30px; font-size: var(--fs-small); }
+      .slider-dot { width: 8px; height: 8px; }
+      .hero-badge { font-size: var(--fs-small); padding: 4px 12px 4px 10px; }
+      .logo .logo-light img, .logo .logo-dark img { height: 24px; }
+    }
+  </style>
+</head>
+<body>
+  <header id="header">
+    <div class="container">
+      <nav class="navbar">
+        <a href="#" class="logo">
+          <span class="logo-light"><img src="logo.png" alt="Enga Works" /><span class="logo-text">&nbsp; ENGA WORKS</span></span>
+          <span class="logo-dark"><img src="logo_dark.png" alt="Enga Works" /><span class="logo-text">&nbsp; ENGA WORKS</span></span>
+        </a>
+        <ul class="nav-links">
+          <li><a href="#" class="active">Home</a></li>
+          <li><a href="#about">About</a></li>
+          <li><a href="#services">Services</a></li>
+          <li><a href="#projects">Projects</a></li>
+          <li><a href="#sectors">Sectors</a></li>
+          <li><a href="#contact" class="btn-contact">Contact</a></li>
+        </ul>
+        <div class="nav-controls">
+          <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">
+            <i class="fas fa-sun" id="themeIcon"></i>
+          </button>
+          <div class="hamburger" id="hamburger"><i class="fas fa-bars"></i></div>
+        </div>
+      </nav>
+    </div>
+  </header>
+
+  <!-- ===== HERO SLIDER ===== -->
+  <section class="hero-slider" id="home">
+    <!-- slides -->
+    <div class="slide active" style="background-image: url('https://images.unsplash.com/photo-1487958449943-2429e8be8625?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80');"></div>
+    <div class="slide" style="background-image: url('https://images.unsplash.com/photo-1541888946425-d81bb19240f5?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80');"></div>
+    <div class="slide" style="background-image: url('https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80');"></div>
+    <div class="slide" style="background-image: url('https://images.unsplash.com/photo-1511818966892-d7d671e672a2?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80');"></div>
+    <div class="slide-overlay"></div>
+
+    <div class="hero-content">
+      <div class="container">
+        <div data-aos="fade-up" data-aos-duration="1000">
+          <div class="hero-badge">
+            <i class="fas fa-pencil-ruler"></i> Design · Architecture · Consulting
+          </div>
+          <h1>
+            Contemporary African <br>
+            <span class="highlight">Design & Arch</span> practice
+          </h1>
+          <p>Enga Works is a consulting and contracting studio based in Lagos, with a London perspective. We craft human-centred, sustainable and culturally resonant spaces — from concept to craft.</p>
+          <div class="hero-actions">
+            <a href="#projects" class="btn btn-accent">View Projects</a>
+            <a href="#contact" class="btn btn-outline">Get in Touch</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- slider controls -->
+    <div class="slider-controls">
+      <button class="slider-arrow" id="prevSlide" aria-label="Previous slide"><i class="fas fa-chevron-left"></i></button>
+      <button class="slider-dot active" data-index="0" aria-label="Slide 1"></button>
+      <button class="slider-dot" data-index="1" aria-label="Slide 2"></button>
+      <button class="slider-dot" data-index="2" aria-label="Slide 3"></button>
+      <button class="slider-dot" data-index="3" aria-label="Slide 4"></button>
+      <button class="slider-arrow" id="nextSlide" aria-label="Next slide"><i class="fas fa-chevron-right"></i></button>
+    </div>
+  </section>
+
+  <!-- ===== ABOUT ===== -->
+  <section class="bg-light" id="about">
+    <div class="container">
+      <div class="section-title" data-aos="fade-right"><h2>About Enga Works</h2></div>
+      <div class="about-grid">
+        <div class="about-content" data-aos="fade-up">
+          <h2>Concept · Culture · Craft</h2>
+          <p>We bridge design vision with build reality. From feasibility to delivery, our practice blends African materiality with global standards. We work across West Africa and in collaboration with international partners.</p>
+          <p>Our approach is rooted in the belief that for a project to have a lasting impact, three elements must be respected: concept, culture and craft. All three link to human-centred design and long-term value creation in the built environment — essential to the flourishing of cities and communities.</p>
+          
+          <div class="stats-grid">
+            <div class="stat-card">
+              <div class="stat-number">12+</div>
+              <div class="stat-label">Projects Delivered</div>
+              <div class="stat-details">Residential · Commercial · Public</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-number">NG/UK</div>
+              <div class="stat-label">Cross-Continental</div>
+              <div class="stat-details">Lagos · London · West Africa</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-number">100%</div>
+              <div class="stat-label">Client-Focused</div>
+              <div class="stat-details">Human-Centred Design</div>
+            </div>
+          </div>
+          <a href="#services" class="btn">Our approach →</a>
+        </div>
+        <div class="about-image" data-aos="fade-left">
+          <img src="https://images.unsplash.com/photo-1541888946425-d81bb19240f5?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80" alt="Architectural design studio">
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== SERVICES ===== -->
+  <section id="services">
+    <div class="container">
+      <div class="section-title" data-aos="fade-right"><h2>What We Do</h2></div>
+      <div class="services-grid">
+        <div class="service-card" data-aos="zoom-in">
+          <i class="fas fa-compass-drafting"></i>
+          <h3>Architectural Design</h3>
+          <p>Innovative, context-responsive design that respects local culture and materiality while delivering contemporary solutions.</p>
+        </div>
+        <div class="service-card" data-aos="zoom-in" data-aos-delay="50">
+          <i class="fas fa-city"></i>
+          <h3>Urban & Interior Design</h3>
+          <p>Human-centred spaces that enhance wellbeing, from master planning to interior detailing — always with sustainability in mind.</p>
+        </div>
+        <div class="service-card" data-aos="zoom-in" data-aos-delay="100">
+          <i class="fas fa-hard-hat"></i>
+          <h3>Project & Contract Management</h3>
+          <p>Full-spectrum project delivery from concept to handover, including procurement, contractor management and quality assurance.</p>
+        </div>
+        <div class="service-card" data-aos="zoom-in" data-aos-delay="150">
+          <i class="fas fa-leaf"></i>
+          <h3>Sustainable Design Consulting</h3>
+          <p>Environmentally responsible strategies that reduce carbon footprint, enhance energy efficiency and promote long-term resilience.</p>
+        </div>
+        <div class="service-card" data-aos="zoom-in" data-aos-delay="150">
+          <i class="fas fa-handshake"></i>
+          <h3>Development Advisory</h3>
+          <p>Strategic advice for developers, investors and public sector clients — from feasibility studies to project financing.</p>
+        </div>
+        <div class="service-card" data-aos="zoom-in" data-aos-delay="150">
+          <i class="fas fa-globe-africa"></i>
+          <h3>Cross-Border Collaboration</h3>
+          <p>Working with international partners to bring global best practice to local contexts, bridging Lagos, London and beyond.</p>
+        </div>
+      </div>
+      <div style="text-align:center; margin-top:40px;"><a href="#contact" class="btn btn-accent">Discuss your project</a></div>
+    </div>
+  </section>
+
+  <!-- ===== PROJECTS ===== -->
+  <section class="bg-light" id="projects">
+    <div class="container">
+      <div class="section-title" data-aos="fade-right"><h2>Selected Works</h2></div>
+      <div class="projects-grid">
+        <div class="project-card" data-aos="fade-up">
+          <img src="https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Lagos Heights">
+          <div class="project-info">
+            <h3>Lagos Heights</h3>
+            <p>Mixed-use · Ikoyi</p>
+            <span class="project-tag">Concept</span>
+          </div>
+        </div>
+        <div class="project-card" data-aos="fade-up" data-aos-delay="50">
+          <img src="https://images.unsplash.com/photo-1541888946425-d81bb19240f5?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Eko Atelier">
+          <div class="project-info">
+            <h3>Eko Atelier</h3>
+            <p>Creative studio · Victoria Island</p>
+            <span class="project-tag">Interior</span>
+          </div>
+        </div>
+        <div class="project-card" data-aos="fade-up" data-aos-delay="100">
+          <img src="https://images.unsplash.com/photo-1487958449943-2429e8be8625?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Garden Pavilion">
+          <div class="project-info">
+            <h3>Garden Pavilion</h3>
+            <p>Residential · Lekki</p>
+            <span class="project-tag">Sustainable</span>
+          </div>
+        </div>
+      </div>
+      <div style="text-align:center; margin-top:30px;"><a href="#" class="btn">View all projects →</a></div>
+    </div>
+  </section>
+
+  <!-- ===== SECTORS ===== -->
+  <section id="sectors">
+    <div class="container">
+      <div class="section-title" data-aos="fade-right"><h2>Key Sectors</h2></div>
+      <div class="sectors-grid">
+        <div class="sector-item">Residential</div>
+        <div class="sector-item">Commercial</div>
+        <div class="sector-item">Hospitality</div>
+        <div class="sector-item">Healthcare</div>
+        <div class="sector-item">Education</div>
+        <div class="sector-item">Public Buildings</div>
+        <div class="sector-item">Cultural Spaces</div>
+        <div class="sector-item">Mixed-Use</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== PARTNERS ===== -->
+  <section class="bg-light">
+    <div class="container">
+      <div class="section-title" data-aos="fade-right"><h2>Collaborators & Clients</h2></div>
+      <div class="partners-grid">
+        <div class="partner-item" data-aos="fade-up" data-aos-delay="30"><span>Studio Contra</span></div>
+        <div class="partner-item" data-aos="fade-up" data-aos-delay="60"><span>RIBA</span></div>
+        <div class="partner-item" data-aos="fade-up" data-aos-delay="90"><span>ARCON</span></div>
+        <div class="partner-item" data-aos="fade-up" data-aos-delay="120"><span>Lagos State</span></div>
+        <div class="partner-item" data-aos="fade-up" data-aos-delay="150"><span>London Partners</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== FOOTER ===== -->
+  <footer id="contact">
+    <div class="container">
+      <div class="footer-grid">
+        <!-- Brand Column (widest) -->
+        <div class="footer-brand">
+          <a href="#" class="footer-logo">Enga Works</a>
+          <p>Design & Architecture · Consulting & Contracting · Lagos via London</p>
+          <div class="social-links">
+            <a href="https://www.instagram.com/engaworks/" target="_blank"><i class="fab fa-instagram"></i></a>
+            <a href="https://www.linkedin.com/company/enga-works/?viewAsMember=true" target="_blank"><i class="fab fa-linkedin-in"></i></a>
+            <!-- <a href="#"><i class="fab fa-x-twitter"></i></a> -->
+            <!-- <a href="#"><i class="fab fa-youtube"></i></a> -->
+          </div>
+        </div>
+
+        <!-- Quick Links (thinnest) -->
+        <div class="footer-links">
+          <h4>Quick Links</h4>
+          <ul>
+            <li><a href="#">Home</a></li>
+            <li><a href="#about">About</a></li>
+            <li><a href="#services">Services</a></li>
+            <li><a href="#projects">Projects</a></li>
+            <li><a href="#sectors">Sectors</a></li>
+          </ul>
+        </div>
+
+        <!-- Lagos Office -->
+        <div class="footer-links">
+          <h4><i class="fas fa-map-pin" style="margin-right: 6px;"></i> Lagos Office</h4>
+          <div class="office">
+            <p><i class="fas fa-location-dot"></i> <strong>Lagos, Nigeria</strong></p>
+            <p><i class="fas fa-envelope"></i> studio@engaworks.com</p>
+            <p><i class="fas fa-phone"></i> +44 7887684349</p>
+          </div>
+        </div>
+
+        <!-- London Office -->
+        <div class="footer-links">
+          <h4><i class="fas fa-map-pin" style="margin-right: 6px;"></i> London Office</h4>
+          <div class="office">
+            <p><i class="fas fa-location-dot"></i> <strong>London, UK</strong></p>
+            <p><i class="fas fa-envelope"></i> studio@engaworks.com</p>
+            <p><i class="fas fa-phone"></i> +44 7887684349</p>
+          </div>
+        </div>
+      </div>
+      <div class="copyright">
+        <p>© 2026 Enga Works — Design & Architecture. All rights reserved.</p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+  <script>
+    // ===== AOS =====
+    AOS.init({ duration: 800, once: true, offset: 80 });
+
+    // ===== Header scroll =====
+    const header = document.getElementById('header');
+    window.addEventListener('scroll', () => { header.classList.toggle('scrolled', window.scrollY > 50); });
+
+    // ===== Mobile menu =====
+    const hamburger = document.getElementById('hamburger');
+    const navLinks = document.querySelector('.nav-links');
+    hamburger.addEventListener('click', () => {
+      navLinks.classList.toggle('active');
+      hamburger.innerHTML = navLinks.classList.contains('active') ? '<i class="fas fa-times"></i>' : '<i class="fas fa-bars"></i>';
+    });
+    document.querySelectorAll('.nav-links a').forEach(link => link.addEventListener('click', () => {
+      navLinks.classList.remove('active');
+      hamburger.innerHTML = '<i class="fas fa-bars"></i>';
+    }));
+
+    // ===== Theme toggle =====
+    const themeToggle = document.getElementById('themeToggle');
+    const themeIcon = document.getElementById('themeIcon');
+    let currentTheme = localStorage.getItem('theme') || 'dark';
+    if (currentTheme === 'dark') {
+      document.documentElement.setAttribute('data-theme', 'dark');
+      themeIcon.className = 'fas fa-sun';
+    } else {
+      themeIcon.className = 'fas fa-moon';
+    }
+    themeToggle.addEventListener('click', () => {
+      const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+      if (isDark) {
+        document.documentElement.removeAttribute('data-theme');
+        themeIcon.className = 'fas fa-moon';
+        localStorage.setItem('theme', 'light');
+      } else {
+        document.documentElement.setAttribute('data-theme', 'dark');
+        themeIcon.className = 'fas fa-sun';
+        localStorage.setItem('theme', 'dark');
+      }
+    });
+
+    // ===== Hero slider =====
+    const slides = document.querySelectorAll('.slide');
+    const dots = document.querySelectorAll('.slider-dot');
+    const prevBtn = document.getElementById('prevSlide');
+    const nextBtn = document.getElementById('nextSlide');
+    let currentSlide = 0;
+    let slideInterval;
+
+    function goToSlide(index) {
+      slides.forEach(s => s.classList.remove('active'));
+      dots.forEach(d => d.classList.remove('active'));
+      slides[index].classList.add('active');
+      dots[index].classList.add('active');
+      currentSlide = index;
+    }
+
+    function nextSlide() {
+      const next = (currentSlide + 1) % slides.length;
+      goToSlide(next);
+    }
+
+    function prevSlide() {
+      const prev = (currentSlide - 1 + slides.length) % slides.length;
+      goToSlide(prev);
+    }
+
+    function resetInterval() {
+      clearInterval(slideInterval);
+      slideInterval = setInterval(nextSlide, 5000);
+    }
+
+    dots.forEach(dot => {
+      dot.addEventListener('click', () => {
+        const index = parseInt(dot.dataset.index);
+        goToSlide(index);
+        resetInterval();
+      });
+    });
+
+    prevBtn.addEventListener('click', () => { prevSlide(); resetInterval(); });
+    nextBtn.addEventListener('click', () => { nextSlide(); resetInterval(); });
+
+    // start autoplay
+    slideInterval = setInterval(nextSlide, 5000);
+
+    // pause on hover
+    const slider = document.querySelector('.hero-slider');
+    slider.addEventListener('mouseenter', () => clearInterval(slideInterval));
+    slider.addEventListener('mouseleave', () => {
+      slideInterval = setInterval(nextSlide, 5000);
+    });
+  </script>
+</body>
+</html>
