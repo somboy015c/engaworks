@@ -1578,6 +1578,32 @@
     #comp-l72e78dp1{--shc-mutated-brightness:128,128,128;--margin-start:0px;--margin-end:0px;--fnt:normal normal normal 20px/1.4em poppins-extralight,poppins,sans-serif;direction:var(--wix-opt-in-direction, ltr);--label-align:center;--label-text-align:center;}
   </style>
 
+  <style>
+  /* Override Wix's fixed mesh height for the Portfolio section
+     so it sizes to the actual gallery content instead */
+  [data-mesh-id="comp-l72a4r9f2inlineContent-gridContainer"] {
+    min-height: 0 !important;
+    grid-template-rows: min-content auto !important;
+    height: auto !important;
+  }
+
+  /* This was reserved for the old gallery widget that no longer
+     exists in the DOM — remove its fixed height entirely */
+  #comp-izpnf6io {
+    height: auto !important;
+    min-height: 0 !important;
+  }
+
+  /* Make sure the section itself doesn't clip or force a height */
+  #comp-l72a4r9f2 {
+    height: auto !important;
+  }
+
+  [data-mesh-id="comp-l72a4r9f2inlineContent"] {
+    height: auto !important;
+  }
+</style>
+
   <!-- Custom Portfolio Gallery Styles -->
   <style>
     .portfolio-gallery {
